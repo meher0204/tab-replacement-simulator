@@ -1,91 +1,132 @@
 # Browser Tab Page Replacement Simulator
 
-A Python-based educational simulator that compares **FIFO, LRU, Optimal and Clock** page-replacement policies using browser-tab workloads.
+A Python-based desktop application that simulates operating-system page replacement algorithms using browser-tab access patterns. It compares FIFO, LRU, Optimal, and Clock through a graphical interface, step-by-step traces, and performance summaries.
 
-## Desktop console (recommended)
+## Features
 
-The project includes a graphical desktop console, so you can choose workloads, enter a sequence, set the number of frames, compare policies, and inspect each step without typing command-line options.
+- **Four replacement algorithms:** FIFO, Least Recently Used (LRU), Optimal, and Clock.
+- **Custom workloads:** Enter tab access sequences using spaces or commas.
+- **Preset workloads:** Explore demo, textbook, revisit, random, cyclic, and Belady's anomaly sequences.
+- **Policy comparison:** Compare page hits, page faults, hit ratios, and fault ratios.
+- **Step-by-step trace:** Inspect frame contents, hits, faults, and evicted tabs after each request.
+- **Visualisation:** Compare page faults across replacement algorithms.
+- **Browser Session Mode:** Configure a simulated tab sequence, active-tab capacity, assumed memory per tab, and restoration cost.
+- **Automated tests:** Validate the replacement-policy implementation.
 
-### macOS
+## Screenshots
 
-1. Open the project folder in Finder.
-2. If this is the first run, install the dependency once from Terminal:
+### Main Simulator
+![Main Simulator](screenshots/main-simulator.png)
 
-   ```bash
-   python3 -m pip install -r requirements.txt
-   ```
+### Browser Session Mode
+![Browser Session Mode](screenshots/browser-mode.png)
 
-3. Double-click `Run_Simulator.command` to open the desktop simulator. If macOS blocks it, right-click the file and choose **Open**.
+## Technologies
 
-If you already use a project virtual environment named `.venv`, the launcher will use it automatically.
+- Python
+- Tkinter for the desktop GUI
+- Matplotlib for charts
+- pytest for automated testing
 
-### Windows / Linux
+## Requirements
 
-Install the dependency once:
+- Python 3
+- Dependencies listed in `requirements.txt`
 
-```bash
-python -m pip install -r requirements.txt
-```
+## Installation
 
-Then launch the desktop console:
-
-```bash
-python gui.py
-```
-
-Tkinter is included with most standard Python installations. On some Linux distributions it may need to be installed separately (for example, the `python3-tk` package).
-
-## Using the desktop console
-
-1. Choose a preset workload or select `custom`.
-2. Enter a tab sequence, such as `A B C A B D` (spaces or commas are accepted).
-3. Choose a frame count from 1 to 20.
-4. Click **Run comparison**.
-5. Compare hits, faults and ratios in the results table, inspect the fault chart, and choose a policy to view its step-by-step trace.
-
-## Terminal / command-line mode (optional)
-
-The original command-line interface is still available:
+Clone the repository and enter the project directory:
 
 ```bash
-python main.py
-python main.py --preset textbook --frames 3
-python main.py --seq "A B C A B D" --frames 3 --steps
+git clone https://github.com/meher0204/tab-replacement-simulator.git
+cd tab-replacement-simulator
 ```
 
-## Policies
+Create and activate a virtual environment:
 
-- **FIFO:** evicts the tab loaded earliest.
-- **LRU:** evicts the tab that has not been used for the longest time.
-- **Optimal:** evicts the tab whose next use is farthest in the future; this is a theoretical benchmark.
-- **Clock:** uses a circular pointer and reference bits to give recently used tabs a second chance.
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
 
-## Project structure
+Install dependencies:
+
+```bash
+python3 -m pip install -r requirements.txt
+python3 -m pip install pytest
+```
+
+## Run the Application
+
+Launch the main simulator:
+
+```bash
+python3 gui.py
+```
+
+Choose a preset workload or enter a custom sequence, select the number of frames, and run the comparison.
+
+Open **Browser mode** to explore the browser-session simulation with configurable inputs.
+
+## Run Tests
+
+```bash
+python3 -m pytest -q
+```
+
+## How It Works
+
+Each tab request is checked against the active frames.
+
+- **Hit:** The requested tab is already in memory.
+- **Fault:** The requested tab is not in memory and must be loaded.
+- **Eviction:** When all frames are occupied, the selected replacement policy chooses a tab to remove.
+
+### Replacement Policies
+
+| Algorithm | Replacement strategy |
+|---|---|
+| FIFO | Evicts the tab loaded earliest. |
+| LRU | Evicts the tab least recently used. |
+| Optimal | Evicts the tab whose next use is farthest in the future, or which is never used again. |
+| Clock | Uses reference bits and a circular pointer to provide second chances. |
+
+Optimal is included as a theoretical benchmark because it requires knowledge of future requests.
+
+## Browser Session Simulation
+
+Browser Session Mode reuses the replacement-policy engine to model a browser workload under a limited number of active tab slots.
+
+It displays page faults, estimated restoration cost, and a simplified active-memory estimate. These values are illustrative model outputs, not measurements taken from Chrome, Safari, or another real browser.
+
+## Limitations
+
+- Browser tab behavior is simulated; the application does not connect to a live browser.
+- Memory usage is estimated using a configurable fixed amount per active tab.
+- Restoration cost is calculated from the number of faults and the configured cost per fault.
+- Optimal uses future knowledge and is not a practical online replacement strategy.
+
+## Project Structure
 
 ```text
 tab-replacement-simulator/
-├── gui.py                    # Desktop GUI / visual console
-├── Run_Simulator.command     # macOS double-click launcher
-├── main.py                   # Original command-line interface
-├── requirements.txt          # Python dependencies
+├── gui.py
+├── main.py
+├── requirements.txt
 ├── tabsim/
-│   ├── policies.py           # FIFO, LRU, Optimal and Clock policies
-│   ├── simulator.py          # Shared simulation engine
-│   ├── workloads.py          # Presets, parsing and validation
-│   └── reporter.py           # Text reports and chart helpers
+│   ├── policies.py
+│   ├── simulator.py
+│   ├── workloads.py
+│   ├── reporter.py
+│   └── browser_mode.py
 ├── tests/
-│   └── test_policies.py      # Unit tests
-└── outputs/                  # Optional saved charts
+│   └── test_policies.py
+├── screenshots/
+└── README.md
 ```
 
-## Tests
+## Author
 
-Run the test suite with:
+**Meher Gandhok**
 
-```bash
-python -m pytest -q
-```
-
-## Project scope
-
-This is a simplified educational model: each tab occupies one frame. It demonstrates classical operating-systems replacement policies; it does not reproduce a real browser's memory-management implementation.
+GitHub: [meher0204](https://github.com/meher0204)
