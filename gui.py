@@ -13,6 +13,7 @@ from matplotlib.figure import Figure
 from tabsim.policies import ALL_POLICIES
 from tabsim.simulator import Simulator
 from tabsim.workloads import PRESETS, get_preset, parse_input, validate
+from tabsim.browser_mode import BrowserModeWindow
 
 BG = "#f4f6fa"
 CARD = "#ffffff"
@@ -82,6 +83,7 @@ class SimulatorApp(tk.Tk):
 
         self.run_button = ttk.Button(controls, text="Run comparison", style="Accent.TButton", command=self.run_simulation)
         self.run_button.grid(row=1, column=3, sticky="e", padx=(18, 0), pady=(5, 0))
+        ttk.Button(controls, text="Browser mode", command=self.open_browser_mode).grid(row=1, column=4, sticky="e", padx=(8, 0), pady=(5, 0))
         controls.columnconfigure(1, weight=1)
 
         self.status_var = tk.StringVar(value="Ready")
@@ -139,6 +141,9 @@ class SimulatorApp(tk.Tk):
         footer.pack(fill="x", pady=(10, 0))
         ttk.Label(footer, text="Tip: choose 'custom' to enter your own sequence. Example: A B C A B D", style="Sub.TLabel").pack(side="left")
         ttk.Button(footer, text="Reset", command=self.reset_inputs).pack(side="right")
+
+    def open_browser_mode(self):
+        BrowserModeWindow(self)
 
     def _load_preset(self, name):
         if name not in PRESETS:
